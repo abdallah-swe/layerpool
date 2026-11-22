@@ -11,7 +11,7 @@
 
 One model, split by layers across all your machines. Their memory is pooled, and they train it as one.
 
-[![PyPI](https://img.shields.io/pypi/v/layerpool.svg)](https://pypi.org/project/layerpool/) [![Python](https://img.shields.io/pypi/pyversions/layerpool.svg)](https://pypi.org/project/layerpool/) [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/abdallah-swe/layerpool/blob/main/LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/layerpool.svg?v=1)](https://pypi.org/project/layerpool/) [![Python](https://img.shields.io/pypi/pyversions/layerpool.svg?v=1)](https://pypi.org/project/layerpool/) [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/abdallah-swe/layerpool/blob/main/LICENSE)
 
 </div>
 
