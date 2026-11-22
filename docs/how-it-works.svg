@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 324" width="1080" height="324" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+<defs>
+<marker id="f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#3e5f52"/></marker>
+<marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#a8642a"/></marker>
+</defs>
+<rect x="20" y="60" width="220" height="210" rx="12" fill="#dfe8e2" stroke="#3e5f52" stroke-width="1.5"/>
+<text x="40" y="94" font-size="18" font-weight="650" fill="#23211d" text-anchor="start">Your computer</text>
+<text x="40" y="120" font-size="14" font-weight="400" fill="#7a756b" text-anchor="start">your training code</text>
+<text x="40" y="139" font-size="14" font-weight="400" fill="#7a756b" text-anchor="start">Trainer · TRL · your loop</text>
+<line x1="40" y1="158" x2="220" y2="158" stroke="#d6d0c4"/>
+<text x="40" y="184" font-size="15" font-weight="400" fill="#23211d" text-anchor="start">embeddings</text>
+<text x="40" y="206" font-size="15" font-weight="400" fill="#23211d" text-anchor="start">output head and the loss</text>
+<text x="40" y="228" font-size="15" font-weight="400" fill="#23211d" text-anchor="start">image or audio encoder</text>
+<rect x="320" y="60" width="200" height="210" rx="12" fill="#fbfaf7" stroke="#d6d0c4" stroke-width="1.5"/>
+<text x="340" y="94" font-size="18" font-weight="650" fill="#23211d" text-anchor="start">Device 1</text>
+<rect x="340" y="118.0" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="340" y="124.6" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="340" y="131.2" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="340" y="137.9" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="340" y="144.5" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="340" y="151.1" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="340" y="157.8" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="340" y="164.4" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="340" y="171.0" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="340" y="177.6" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="340" y="184.2" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="340" y="190.9" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<text x="340" y="252" font-size="15" font-weight="600" fill="#23211d" text-anchor="start">layers 0–11</text>
+<rect x="590" y="60" width="200" height="210" rx="12" fill="#fbfaf7" stroke="#d6d0c4" stroke-width="1.5"/>
+<text x="610" y="94" font-size="18" font-weight="650" fill="#23211d" text-anchor="start">Device 2</text>
+<rect x="610" y="118.0" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="610" y="124.6" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="610" y="131.2" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="610" y="137.9" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="610" y="144.5" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="610" y="151.1" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="610" y="157.8" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="610" y="164.4" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="610" y="171.0" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="610" y="177.6" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="610" y="184.2" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="610" y="190.9" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="610" y="197.5" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="610" y="204.1" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="610" y="210.8" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="610" y="217.4" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<text x="610" y="252" font-size="15" font-weight="600" fill="#23211d" text-anchor="start">layers 12–27</text>
+<rect x="860" y="60" width="200" height="210" rx="12" fill="#fbfaf7" stroke="#d6d0c4" stroke-width="1.5"/>
+<text x="880" y="94" font-size="18" font-weight="650" fill="#23211d" text-anchor="start">Device 3</text>
+<rect x="880" y="118.0" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="880" y="124.6" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="880" y="131.2" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="880" y="137.9" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="880" y="144.5" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="880" y="151.1" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="880" y="157.8" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<rect x="880" y="164.4" width="160" height="4.6" rx="2" fill="#c9d8cf"/>
+<text x="880" y="252" font-size="15" font-weight="600" fill="#23211d" text-anchor="start">layers 28–35</text>
+<line x1="244" y1="152" x2="316" y2="152" stroke="#3e5f52" stroke-width="2.5" marker-end="url(#f)"/>
+<line x1="316" y1="210" x2="244" y2="210" stroke="#a8642a" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#g)"/>
+<line x1="514" y1="152" x2="586" y2="152" stroke="#3e5f52" stroke-width="2.5" marker-end="url(#f)"/>
+<line x1="586" y1="210" x2="514" y2="210" stroke="#a8642a" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#g)"/>
+<line x1="784" y1="152" x2="856" y2="152" stroke="#3e5f52" stroke-width="2.5" marker-end="url(#f)"/>
+<line x1="856" y1="210" x2="784" y2="210" stroke="#a8642a" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#g)"/>
+<path d="M 960 270 L 960 304 L 130 304 L 130 274" fill="none" stroke="#3e5f52" stroke-width="2.5" marker-end="url(#f)"/>
+<text x="560" y="294" font-size="14" font-weight="400" fill="#7a756b" text-anchor="middle">the last device's output comes back for the loss</text>
+<line x1="20" y1="26" x2="54" y2="26" stroke="#3e5f52" stroke-width="2.5" marker-end="url(#f)"/>
+<text x="64" y="30" font-size="14" font-weight="400" fill="#7a756b" text-anchor="start">activations, forward</text>
+<line x1="230" y1="26" x2="264" y2="26" stroke="#a8642a" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#g)"/>
+<text x="274" y="30" font-size="14" font-weight="400" fill="#7a756b" text-anchor="start">gradients, back</text>
+<text x="1060" y="30" font-size="14" font-weight="400" fill="#7a756b" text-anchor="end">any number of devices: GPUs, Macs or CPUs, nearby or over the internet</text>
+</svg>
