@@ -24,6 +24,7 @@ SHA256 = {
     "cloudflared-linux-arm64": "3df43aedc9ff291d1735b5cb576cb97e0b157488796db2e32b28aecabb445775",
     "cloudflared-windows-amd64.exe": "2493dbc168923bb3e59e5e7716f71deced92992eea9acd6e9d74f84ac7751343",
 }
+SETTLE_S = 3.0
 CACHE = os.path.join(os.path.expanduser("~"), ".cache", "layerpool")
 
 
@@ -117,6 +118,8 @@ class Tunnel:
             threading.Thread(target=self._read, daemon=True).start()
             try:
                 self.url = self._wait_url(timeout)
+                self._wait_registered(20)
+                time.sleep(SETTLE_S)
                 self._wait_reachable(timeout)
                 log(f"tunnel ready at {self.url} after {time.time() - started:.0f}s")
                 return
@@ -143,6 +146,16 @@ class Tunnel:
             time.sleep(0.2)
         self.close()
         raise RuntimeError("cloudflared did not give a tunnel address:\n" + "".join(self.lines[-20:]))
+
+    def _wait_registered(self, timeout: float):
+        """The address is printed before the tunnel is connected. Asking for it that early makes Cloudflare and DNS servers remember
+        for up to a minute that it does not exist, so wait until cloudflared says it is connected (or, if it never says so, for
+        `timeout` seconds). Cloudflare's servers learn of it a moment later still: SETTLE_S."""
+        deadline = time.time() + timeout
+        while time.time() < deadline and self.proc.poll() is None:
+            if any("Registered tunnel connection" in line for line in list(self.lines)):
+                return
+            time.sleep(0.1)
 
     def _wait_reachable(self, timeout: float):
         deadline = time.time() + timeout

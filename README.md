@@ -15,6 +15,10 @@ One model, split by layers across all your machines. Their memory is pooled, and
 
 </div>
 
+<p align="center">
+<img src="https://raw.githubusercontent.com/abdallah-swe/layerpool/main/docs/demo.webp" width="75%" alt="A model too big to train on any single machine is split by its layers across a gaming PC, a desktop, a laptop and a cloud GPU, and they train it together. When the laptop drops out, the others take over its layers.">
+</p>
+
 <div align="center">
 
 | 💻 Laptop | 🖥️ Desktop | 🎮 Gaming PC | ☁️ Cloud GPU | | ⚡ Your pool |
@@ -282,6 +286,21 @@ dashboard or with `layerpool approve CODE`.
 | `LAYERPOOL_REPLAY_GB` | GB of recent steps the pool keeps on disk to redo them after a device drops out; past it, devices save a new checkpoint (default `4`) |
 
 </details>
+
+## Compared to other tools
+
+| | layerpool | [FSDP](https://docs.pytorch.org/tutorials/intermediate/FSDP_tutorial.html) / [DeepSpeed](https://github.com/deepspeedai/DeepSpeed) | [Petals](https://github.com/bigscience-workshop/petals) | [exo](https://github.com/exo-explore/exo) |
+| :--- | :---: | :---: | :---: | :---: |
+| Trains the model's own layers | ✅ | ✅ | ❌ | ❌ |
+| LoRA, QLoRA and full fine-tuning | ✅ | ✅ | ❌ | ❌ |
+| Training from scratch | ✅ | ✅ | ❌ | ❌ |
+| Works with the Hugging Face Trainer | ✅ | ✅ | – | ❌ |
+| NVIDIA, Apple Silicon and CPU in one model | ✅ | ❌ | partly | ❌ |
+| Over the internet, no port forwarding | ✅ | ❌ | ✅ | ❌ |
+| Stronger devices get more layers | ✅ | ❌ | ✅ | ✅ |
+| Goes on when a device drops out | ✅ | ❌ | ✅ | – |
+
+<sub>From each project's documentation, November 2026.</sub>
 
 ## FAQ
 

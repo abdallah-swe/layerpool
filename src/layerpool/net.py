@@ -318,6 +318,7 @@ def lan_ip() -> str:
         s.close()
 
 
+QUICK_TUNNELS = ".trycloudflare.com"
 _resolved: dict[str, tuple[str, float]] = {}
 
 
@@ -336,9 +337,22 @@ def _ask_public_dns(host: str) -> str | None:
     return None
 
 
+def _front_door(host: str) -> str | None:
+    """A quick tunnel is served by the same Cloudflare addresses as its parent domain, which find the tunnel by the host name sent
+    with TLS, so a tunnel answers there before its own name has spread through DNS."""
+    if not host.endswith(QUICK_TUNNELS):
+        return None
+    parent = QUICK_TUNNELS.lstrip(".")
+    try:
+        return socket.getaddrinfo(parent, None, socket.AF_INET)[0][4][0]
+    except socket.gaierror:
+        return _ask_public_dns(parent)
+
+
 def resolve(host: str) -> str:
-    """The address to connect to. A fresh tunnel name is often cached as missing by the local resolver for many
-    minutes, so when the system cannot find a name, ask public DNS over HTTPS instead."""
+    """The address to connect to. A fresh tunnel name is often cached as missing by the local resolver for many minutes, so when
+    the system cannot find a name, ask public DNS over HTTPS instead. Public DNS can hold the same miss for about a minute: a quick
+    tunnel is then reached through its parent domain."""
     try:
         socket.getaddrinfo(host, None)
         return host
@@ -346,7 +360,7 @@ def resolve(host: str) -> str:
         cached = _resolved.get(host)
         if cached and cached[1] > time.time():
             return cached[0]
-        ip = _ask_public_dns(host)
+        ip = _ask_public_dns(host) or _front_door(host)
         if ip is None:
             raise
         _resolved[host] = (ip, time.time() + 300)
