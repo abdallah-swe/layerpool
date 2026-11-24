@@ -1,37 +1,14 @@
-import json
 import random
 
 import numpy as np
 
-from .job import encode_row, load_rows
-
-PREFERENCE = ("dpo", "ipo", "simpo", "orpo")
-
-
-def _load(data):
-    if isinstance(data, str):
-        if data.endswith((".jsonl", ".json")) and _is_preference_file(data):
-            with open(data, encoding="utf-8") as f:
-                return [json.loads(line) for line in f if line.strip()] if data.endswith(".jsonl") else json.load(f)
-        return load_rows(data)
-    if hasattr(data, "to_list"):
-        return data.to_list()
-    return list(data)
-
-
-def _is_preference_file(path: str) -> bool:
-    with open(path, encoding="utf-8") as f:
-        first = f.readline() if path.endswith(".jsonl") else f.read(4096)
-    return '"chosen"' in first and '"rejected"' in first
+from .data import PREFERENCE, load
+from .job import encode_row
 
 
 def _pack(rows: list, tokenizer, seq: int, assistant_only: bool) -> tuple[np.ndarray, np.ndarray]:
     stream, targets = [], []
     for row in rows:
-        if isinstance(row, dict) and "messages" in row:
-            row = row["messages"]
-        elif isinstance(row, dict) and "text" in row:
-            row = row["text"]
         ids, labels = encode_row(tokenizer, row, assistant_only)
         stream.extend(ids)
         targets.extend(labels)
@@ -41,16 +18,10 @@ def _pack(rows: list, tokenizer, seq: int, assistant_only: bool) -> tuple[np.nda
     return np.array(stream[:count * seq]).reshape(count, seq), np.array(targets[:count * seq]).reshape(count, seq)
 
 
-def _messages(prompt, reply) -> list[dict]:
-    head = prompt if isinstance(prompt, list) else [{"role": "user", "content": prompt}]
-    tail = reply if isinstance(reply, list) else [{"role": "assistant", "content": reply}]
-    return head + tail
-
-
 def _pair(tokenizer, row: dict, seq: int) -> tuple:
     out = []
     for side in ("chosen", "rejected"):
-        ids, labels = encode_row(tokenizer, _messages(row["prompt"], row[side]))
+        ids, labels = encode_row(tokenizer, row[side])
         out.append((ids[:seq], labels[:seq]))
     return out
 
@@ -63,7 +34,7 @@ def _tell_length(run, total: int):
 
 
 def train(run, data, method="sft", steps=None, epochs=1.0, batch_size=8, seq=None, max_grad_norm=1.0, beta=None, on_step=None, seed=0,
-          assistant_only=True, gamma=0.5, lam=0.1, start_step=0, reference=None, **kw):
+          assistant_only=True, gamma=0.5, lam=0.1, start_step=0, reference=None, split="train", subset=None, **kw):
     from . import losses
     if kw:
         raise TypeError(f"train() got unknown settings: {', '.join(sorted(kw))}")
@@ -73,7 +44,7 @@ def train(run, data, method="sft", steps=None, epochs=1.0, batch_size=8, seq=Non
     if tok is None:
         raise ValueError("this run has no tokenizer; pass tokenized batches to forward_backward instead")
     seq = seq or run.job.get("seq", 512)
-    rows = _load(data)
+    rows = load(data, method, split, subset)
     rng = random.Random(seed)
     history = []
     if method in ("sft", "cpt"):
@@ -95,8 +66,6 @@ def train(run, data, method="sft", steps=None, epochs=1.0, batch_size=8, seq=Non
             if on_step:
                 on_step(record)
         return history
-    if method not in PREFERENCE:
-        raise ValueError(f"method must be one of sft, cpt, {', '.join(PREFERENCE)}")
     import torch
     pairs = [_pair(tok, row, seq) for row in rows]
     pad = run.job.get("pad_id", 0)

@@ -180,29 +180,6 @@ def build_job(model: str, mlx_model: str | None = None, mode: str = "lora", rank
     return job
 
 
-def load_rows(path: str) -> list:
-    if path.endswith((".jsonl", ".json")):
-        with open(path, encoding="utf-8") as f:
-            rows = [json.loads(line) for line in f if line.strip()] if path.endswith(".jsonl") else json.load(f)
-        if not isinstance(rows, list):
-            raise ValueError(f"{path}: a .json file must hold a list of rows (strings, or objects with 'text' or 'messages')")
-        out = []
-        for row in rows:
-            if isinstance(row, str):
-                out.append(row)
-            elif "messages" in row:
-                out.append(row["messages"])
-            elif "text" in row:
-                out.append(row["text"])
-            else:
-                raise ValueError(f"{path}: every row needs a 'text' or 'messages' field")
-        return out
-    if not path.endswith((".txt", ".md")):
-        raise ValueError(f"{path}: give the data as .jsonl or .json rows, or as a .txt or .md file of plain text")
-    with open(path, encoding="utf-8") as f:
-        return [f.read()]
-
-
 def _render(tokenizer, messages: list[dict], prompt: bool = False) -> str:
     return tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=prompt)
 

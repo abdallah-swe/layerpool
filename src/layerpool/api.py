@@ -313,7 +313,8 @@ class Run:
     def train(self, data, method: str = "sft", steps: int | None = None, epochs: float = 1.0, batch_size: int = 8, seq: int | None = None,
               max_grad_norm: float | None = 1.0, beta: float | None = None, on_step=None, seed: int = 0, **kw) -> list[dict]:
         """Built-in loops. method: "sft" (chat or text rows, learns assistant replies), "cpt" (raw text, every token),
-        "dpo" / "ipo" / "simpo" / "orpo" (rows with prompt, chosen, rejected)."""
+        "dpo" / "ipo" / "simpo" / "orpo" (rows with prompt, chosen, rejected). data: rows, a dataset, a file, or the name of a
+        dataset on Hugging Face (with split= and subset=)."""
         return trainers.train(self, data, method=method, steps=steps, epochs=epochs, batch_size=batch_size, seq=seq, max_grad_norm=max_grad_norm,
                               beta=beta, on_step=on_step, seed=seed, **kw)
 

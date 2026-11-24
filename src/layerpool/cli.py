@@ -17,12 +17,13 @@ import psutil
 from . import __version__, worker as worker_module
 from .api import connect, start
 from .control import ControlServer, RemoteError, find_local
+from .data import is_hub_name, load
 from .pool import Pool, PoolError
 
 REFERENCE_FILE = "reference_logprobs.npy"
-TRAIN_KEYS = ("model", "mlx_model", "data", "method", "mode", "rank", "alpha", "lr", "schedule", "warmup", "min_lr_ratio", "weight_decay", "steps",
-              "epochs", "batch_size", "seq", "micro", "micro_batch_size", "codec", "ckpt_every", "max_grad_norm", "beta", "out", "random_init", "train_on", "name",
-              "save_every", "resume", "target_modules")
+TRAIN_KEYS = ("model", "mlx_model", "data", "split", "subset", "method", "mode", "rank", "alpha", "lr", "schedule", "warmup", "min_lr_ratio",
+              "weight_decay", "steps", "epochs", "batch_size", "seq", "micro", "micro_batch_size", "codec", "ckpt_every", "max_grad_norm", "beta", "out",
+              "random_init", "train_on", "name", "save_every", "resume", "target_modules")
 
 
 def plain_error(e: BaseException) -> str:
@@ -120,7 +121,10 @@ def train(argv):
     p.add_argument("config", nargs="?", help="YAML or JSON file with any of the options below")
     p.add_argument("--model")
     p.add_argument("--mlx-model")
-    p.add_argument("--data", help=".jsonl/.json/.txt: chat rows ('messages'), text rows ('text'), or preference rows ('prompt', 'chosen', 'rejected')")
+    p.add_argument("--data", help="a .jsonl/.json/.txt file or a Hugging Face dataset (user/name): chat rows (messages, ShareGPT), Alpaca "
+                   "or prompt/completion rows, text rows, or preference rows (prompt, chosen, rejected)")
+    p.add_argument("--split", help="which split of a Hugging Face dataset, such as train[:1000] (default: train)")
+    p.add_argument("--subset", help="which configuration of a Hugging Face dataset that has several")
     p.add_argument("--method", choices=["sft", "cpt", "dpo", "ipo", "simpo", "orpo"])
     p.add_argument("--mode", choices=["lora", "full"])
     p.add_argument("--random-init", action="store_true", default=None, help="train from scratch (with --mode full)")
@@ -168,14 +172,15 @@ def train(argv):
     cfg.update({k: v for k, v in vars(args).items() if k in TRAIN_KEYS and v is not None})
     if not cfg.get("model") or not cfg.get("data"):
         sys.exit("layerpool train: --model and --data are required (or put them in the config file)")
-    if isinstance(cfg["data"], str) and not os.path.exists(cfg["data"]):
+    if isinstance(cfg["data"], str) and not os.path.exists(cfg["data"]) and not is_hub_name(cfg["data"]):
         sys.exit(f"layerpool train: the data file {cfg['data']} does not exist")
     run_training(cfg, local=args.local)
 
 
 def run_training(cfg: dict, local: bool = False):
-    client = start(control=False) if local else _client()
     method = cfg.get("method", "sft")
+    rows = load(cfg["data"], method, cfg.get("split") or "train", cfg.get("subset"))
+    client = start(control=False) if local else _client()
     run_kwargs = {k: cfg[k] for k in ("mlx_model", "mode", "rank", "alpha", "lr", "schedule", "warmup", "min_lr_ratio", "weight_decay", "micro", "codec",
                                       "micro_batch_size", "ckpt_every", "random_init", "seq", "target_modules") if cfg.get(k) is not None}
     batch = cfg.get("batch_size", 8)
@@ -216,7 +221,7 @@ def run_training(cfg: dict, local: bool = False):
                 np.save(os.path.join(path, REFERENCE_FILE), run.reference)
             print(f"layerpool: checkpoint {path} (resume with --resume {path})", flush=True)
     try:
-        run.train(cfg["data"], method=method, steps=cfg.get("steps"), epochs=cfg.get("epochs", 1.0), batch_size=batch, seq=cfg.get("seq"),
+        run.train(rows, method=method, steps=cfg.get("steps"), epochs=cfg.get("epochs", 1.0), batch_size=batch, seq=cfg.get("seq"),
                   max_grad_norm=cfg.get("max_grad_norm", 1.0), beta=cfg.get("beta"), assistant_only=cfg.get("train_on", "assistant") == "assistant",
                   on_step=on_step, start_step=start_step, reference=reference)
         path = run.save(out)
