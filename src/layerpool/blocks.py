@@ -276,7 +276,7 @@ def _prune_ranges(repo: str, keep: str):
     with open(os.path.join(keep, "layerpool_part.json"), "w", encoding="utf-8") as f:
         json.dump(marker, f)
     now = time.time()
-    for name in os.listdir(RANGE_CACHE):
+    for name in os.listdir(RANGE_CACHE) if os.path.isdir(RANGE_CACHE) else ():
         folder = os.path.join(RANGE_CACHE, name)
         if folder == keep:
             continue
@@ -394,6 +394,8 @@ def load_blocks(repo: str, lay: dict, first: int, last: int, device, dtype, quan
         prefix = lay["stack"] + "."
         missing = {k for k in info.get("missing_keys", []) if k.startswith(prefix)}
     blocks = list(model.get_submodule(lay["stack"]))
+    if quantized:
+        _compute_in(blocks, dtype)
     if not quantized and in_place:
         saved = None if random_init else os.path.join(out, "model.safetensors")
         blocks = _as_in_full_model(blocks, config, lay, first, device, missing if not random_init else set(), repo, saved, dtype)
@@ -404,6 +406,19 @@ def load_blocks(repo: str, lay: dict, first: int, last: int, device, dtype, quan
             if isinstance(getattr(mod, "layer_idx", None), int):
                 mod.layer_idx = first + j
     return blocks
+
+
+def _compute_in(blocks, dtype):
+    """A 4-bit checkpoint names the 16-bit type it was made to compute in, mostly bfloat16, and its 16-bit weights load in that
+    type. GPUs without bfloat16 in hardware (a T4) emulate it, several times slower, so the blocks compute in the device's own."""
+    import torch
+    for block in blocks:
+        for mod in block.modules():
+            if type(mod).__name__ == "Linear4bit":
+                mod.compute_dtype, mod.compute_type_is_set = dtype, True
+        for value in [*block.parameters(), *block.buffers()]:
+            if value.dtype in (torch.float16, torch.bfloat16) and value.dtype != dtype:
+                value.data = value.data.to(dtype)
 
 
 def _as_in_full_model(loaded: list, config, lay: dict, first: int, device, missing: set, repo: str, saved: str | None = None,
